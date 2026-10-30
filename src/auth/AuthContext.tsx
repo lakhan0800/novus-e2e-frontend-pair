@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
+import { trackEvent } from "../analytics/trackEvent";
 import { api } from "../api/client";
 
 export interface User {
@@ -36,6 +37,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
     setUser(session.user);
     setAccount(session.account);
+    // Session established by POST /api/auth/login; the user is about to land on the Dashboard.
+    trackEvent("Signed in", {
+      user_role: session.user.role,
+      account_plan: session.account.plan,
+      account_seats: session.account.seats,
+    });
   };
 
   const logout = () => {
