@@ -49,6 +49,14 @@ button,
   cursor: pointer;
 }
 
+.button-new-project {
+  display: inline-block;
+  background: #16a34a;
+  font-size: 2rem;
+  padding: 16px 28px;
+  text-decoration: none;
+}
+
 .stat-card {
   background: var(--color-surface);
   border-radius: var(--radius);
