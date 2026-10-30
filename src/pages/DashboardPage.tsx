@@ -38,7 +38,7 @@ export function DashboardPage() {
           </li>
         ))}
       </ul>
-      <Link id="dashboard-new-project" className="button-primary" to="/projects?new=1">
+      <Link id="dashboard-new-project" className="button-primary button-new-project" to="/projects?new=1">
         New project
       </Link>
     </section>
