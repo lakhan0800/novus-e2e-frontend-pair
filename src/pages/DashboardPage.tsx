@@ -20,6 +20,7 @@ export function DashboardPage() {
   return (
     <section>
       <h1>Welcome back, {user?.fullName}</h1>
+      <small>PX-274 Cortex chat test</small>
       <div className="stats">
         <div className="stat-card">
           <span className="stat-value">{summary?.openTasks ?? "-"}</span>
