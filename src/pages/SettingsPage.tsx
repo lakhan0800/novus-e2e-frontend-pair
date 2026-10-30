@@ -1,4 +1,5 @@
 import { useState, type FormEvent } from "react";
+import { trackEvent } from "../analytics/trackEvent";
 import { api } from "../api/client";
 import { useAuth } from "../auth/AuthContext";
 
@@ -10,12 +11,23 @@ export function SettingsPage() {
   const invite = async (event: FormEvent) => {
     event.preventDefault();
     await api.post("/api/account/invitations", { email: inviteEmail });
+    // The API created the invitation; the page confirms it was sent.
+    trackEvent("Invitation sent", {
+      account_plan: account?.plan ?? "unknown",
+      account_seats: account?.seats ?? 0,
+    });
     setMessage(`Invitation sent to ${inviteEmail}`);
     setInviteEmail("");
   };
 
   const upgrade = async () => {
     await api.post("/api/account/upgrade", { plan: "team" });
+    // The API confirmed the upgrade to the Team plan.
+    trackEvent("Plan upgraded", {
+      previous_plan: account?.plan ?? "unknown",
+      new_plan: "team",
+      account_seats: account?.seats ?? 0,
+    });
     setMessage("Upgraded to the Team plan");
   };
 
