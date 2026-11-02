@@ -4,6 +4,10 @@ declare global {
   interface Window {
     pendo?: {
       track: (eventName: string, metadata?: Record<string, string | boolean | number>) => void;
+      trackAgent: (
+        eventType: string,
+        metadata: Record<string, string | boolean | number | string[]>,
+      ) => void;
     };
   }
 }
