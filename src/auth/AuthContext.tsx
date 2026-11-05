@@ -36,11 +36,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
     setUser(session.user);
     setAccount(session.account);
+    pendo.identify({
+      visitor: {
+        id: session.user.id,
+        email: session.user.email,
+        full_name: session.user.fullName,
+        role: session.user.role,
+        createdAt: session.user.createdAt,
+      },
+      account: {
+        id: session.account.id,
+        name: session.account.name,
+        plan: session.account.plan,
+        seats: session.account.seats,
+      },
+    });
   };
 
   const logout = () => {
     setUser(null);
     setAccount(null);
+    pendo.clearSession();
   };
 
   return (
