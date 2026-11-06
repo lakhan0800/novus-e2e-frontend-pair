@@ -10,12 +10,25 @@ export function SettingsPage() {
   const invite = async (event: FormEvent) => {
     event.preventDefault();
     await api.post("/api/account/invitations", { email: inviteEmail });
+
+    // Track successful invitation
+    pendo.track("Invitation sent", {
+      plan: account?.plan ?? "unknown",
+    });
+
     setMessage(`Invitation sent to ${inviteEmail}`);
     setInviteEmail("");
   };
 
   const upgrade = async () => {
     await api.post("/api/account/upgrade", { plan: "team" });
+
+    // Track successful plan upgrade
+    pendo.track("Plan upgraded", {
+      previous_plan: account?.plan ?? "unknown",
+      new_plan: "team",
+    });
+
     setMessage("Upgraded to the Team plan");
   };
 

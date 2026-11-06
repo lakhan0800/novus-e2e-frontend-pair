@@ -30,6 +30,13 @@ export function ProjectDetailPage() {
     event.preventDefault();
     if (!project) return;
     const task = await api.post<Task>(`/api/projects/${project.id}/tasks`, { title });
+
+    // Track successful task creation
+    pendo.track("Task added", {
+      project_id: project.id,
+      task_count: project.tasks.length + 1,
+    });
+
     setProject({ ...project, tasks: [...project.tasks, task] });
     setTitle("");
   };
