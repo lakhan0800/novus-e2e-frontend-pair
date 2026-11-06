@@ -51,6 +51,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         seats: session.account.seats,
       },
     });
+
+    // Track successful authentication
+    pendo.track("User authenticated", {
+      role: session.user.role,
+      plan: session.account.plan,
+    });
   };
 
   const logout = () => {

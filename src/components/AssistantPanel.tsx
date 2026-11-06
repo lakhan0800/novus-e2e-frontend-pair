@@ -23,6 +23,11 @@ export function AssistantPanel() {
     try {
       const reply = await api.post<{ reply: string }>("/api/assistant", { messages: next });
       setMessages([...next, { role: "assistant", content: reply.reply }]);
+
+      // Track successful AI response
+      pendo.track("AI response received", {
+        message_count: next.length + 1,
+      });
     } finally {
       setPending(false);
     }
