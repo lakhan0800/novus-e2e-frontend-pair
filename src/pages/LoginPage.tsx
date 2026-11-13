@@ -16,6 +16,8 @@ export function LoginPage() {
       await login(email, password);
       navigate("/");
     } catch {
+      // Track event: the API rejected the credentials, so the form shows an error.
+      pendo.track("Sign-in failed");
       setError("Invalid email or password");
     }
   };

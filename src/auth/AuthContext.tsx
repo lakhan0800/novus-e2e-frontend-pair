@@ -51,6 +51,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         seats: session.account.seats,
       },
     });
+    // Track event: the API accepted the credentials and the session started.
+    pendo.track("Signed in", {
+      role: session.user.role,
+      plan: session.account.plan,
+      seats: session.account.seats,
+    });
   };
 
   const logout = () => {

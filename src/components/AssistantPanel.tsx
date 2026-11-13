@@ -23,6 +23,11 @@ export function AssistantPanel() {
     try {
       const reply = await api.post<{ reply: string }>("/api/assistant", { messages: next });
       setMessages([...next, { role: "assistant", content: reply.reply }]);
+      // Track event: the assistant API returned a reply and it shows in the conversation.
+      pendo.track("Assistant reply received", {
+        message_count: next.length + 1,
+        reply_length: reply.reply.length,
+      });
     } finally {
       setPending(false);
     }
