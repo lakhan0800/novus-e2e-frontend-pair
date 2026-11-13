@@ -1,7 +1,10 @@
 import { useState, type FormEvent } from "react";
 import { api } from "../api/client";
 
+const TASKLY_AI_AGENT_ID = "kQQ3PGnb7RVS-kW0Ak9ryBO-95g";
+
 interface AssistantMessage {
+  id: string;
   role: "user" | "assistant";
   content: string;
 }
@@ -12,17 +15,36 @@ export function AssistantPanel() {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<AssistantMessage[]>([]);
   const [pending, setPending] = useState(false);
+  const [conversationId] = useState(() => crypto.randomUUID());
 
   const send = async (event: FormEvent) => {
     event.preventDefault();
     if (!input.trim()) return;
-    const next = [...messages, { role: "user" as const, content: input }];
+    const promptId = crypto.randomUUID();
+    const next = [...messages, { id: promptId, role: "user" as const, content: input }];
     setMessages(next);
     setInput("");
     setPending(true);
+    pendo.trackAgent("prompt", {
+      agentId: TASKLY_AI_AGENT_ID,
+      conversationId,
+      messageId: promptId,
+      content: input,
+      suggestedPrompt: false,
+      fileUploaded: false,
+    });
     try {
-      const reply = await api.post<{ reply: string }>("/api/assistant", { messages: next });
-      setMessages([...next, { role: "assistant", content: reply.reply }]);
+      const reply = await api.post<{ reply: string }>("/api/assistant", {
+        messages: next.map(({ role, content }) => ({ role, content })),
+      });
+      const responseId = crypto.randomUUID();
+      setMessages([...next, { id: responseId, role: "assistant", content: reply.reply }]);
+      pendo.trackAgent("agent_response", {
+        agentId: TASKLY_AI_AGENT_ID,
+        conversationId,
+        messageId: responseId,
+        content: reply.reply,
+      });
     } finally {
       setPending(false);
     }
@@ -50,8 +72,8 @@ export function AssistantPanel() {
         </button>
       </header>
       <ul className="assistant-messages">
-        {messages.map((message, index) => (
-          <li key={index} className={`message message-${message.role}`}>
+        {messages.map((message) => (
+          <li key={message.id} className={`message message-${message.role}`}>
             {message.content}
           </li>
         ))}
